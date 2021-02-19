@@ -10,51 +10,32 @@
 ; returning. Physical address 0x0 contains a table of address pointers to 
 ; Interrup Service Routines (ISRs).
 
-; print 'Hello, World'
-mov ah, 0x0e
-mov al, 'H'
-int 0x10 ; int10/ah=0eh interrupt which sets the video ouput to TTY and writes 
-         ; the character found in AL
+;
+; A boot sector that prints strings and hex
+;
+[org 0x7c00] ; tell the assembler where this code will be loaded
 
-mov al, 'e'
-int 0x10 
+mov bx, HELLO_MSG ; print_string expects a pointer to a string in BX
+call print_string
 
-mov al, 'l'
-int 0x10
-int 0x10
+mov dx, 0x1234 ; print_hex expects a hex value in DX
+call print_hex
 
-mov al, 'o'
-int 0x10
+mov bx, GOODBYE_MSG
+call print_string
 
-mov al, ','
-int 0x10
+jmp $ ; hang
 
-mov al, ' '
-int 0x10
+%include "routines/print_hex.asm"
+%include "routines/print_string.asm"
 
-mov al, 'W'
-int 0x10
+; Data
+HELLO_MSG:
+db 'Hello, World!', 0x0a, 0x0d, 0 ; strings need to be null terminated
 
-mov al, 'o'
-int 0x10
+GOODBYE_MSG:
+db 0x0a, 0x0d, 'Goodbye!', 0
 
-mov al, 'r'
-int 0x10
-
-mov al, 'l'
-int 0x10
-
-mov al, 'd'
-int 0x10
-
-mov al, '!'
-int 0x10
-
-; infinte loop
-jmp $
-
-; padding and magic number
-times 510-($-$$) db 0 ; $ evaluates to the assembly position at the beginning of 
-                      ; the line
-                      ; $$ evaliates to the beginning of the current section
+; Padding and magic number.
+times 510-($-$$) db 0
 dw 0xaa55
