@@ -1,3 +1,17 @@
+; In 16-bit real mode the maximum size of the registers is 16 bits, which means
+; the highest address we can reference is 0xffff (64KB)
+; CS, DS, SS and ES are segment registers
+; CS = code segment
+; DS = data segment
+; SS = stack segment
+; ES = extra segment (for the programmer)
+; Main memory can be seen as being divided into segments that are indexed with
+; these registers
+; When we therefore specify a 16-bit address, the CPU calculates the absolute
+; address as the relevant register address plus the address we specified
+; Different instructions use different segment registers depending on the 
+; context of what the instruction is doing
+
 mov ah, 0x0e 
 
 mov al, [the_secret]
